@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block header %}
+<script src="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.css" rel="stylesheet">
+<style>
+
+#kanban footer{
+    background-color: var(--bs-body-bg);
+    border:none;
+    padding-bottom: 5%;
+}
+
+
+.kanban-board .kanban-drag {
+    background-color: var(--bs-body-bg);
+    border:2px solid black;
+    overflow:auto;
+    max-height: 80vh;
+}
+
+.kanban-item {
+    color:black;
+    border:2px solid black;
+    border-radius: 5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.kanban-board header{
+    background: var(--bs-blue);
+}
+
+</style>
+{% endblock header %}
+
+{% block body %}
+<a href="/project/{{project_id}}" class="ml-1"><button class="btn btn-primary">Вернуться к проекту</button></a>
+<button class="btn btn-primary" onclick="toggle_sync(true)">Включить синхронизацию</button>
+<button class="btn btn-primary" onclick="toggle_sync(false)">Отключить синхронизацию</button>
+<hr>
+<div class="kanban_container">
+    <div id="kanban" style="text-align: center;">
+        <h3>Загружаем доску...</h3>
+        <img src="https://media.tenor.com/Gvcwykgnd7AAAAAj/yibo-wangyibo.gif">
+    </div>
+</div>
+<!-- <button class="btn btn-primary" onclick="push_cards()">Push</button> -->
+<!-- <button class="btn btn-primary" onclick="fetch_cards()">Fetch</button> -->
+
+<div class="modal fade" id="card_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <textarea class="form-control modal-description" rows="2" autofocus></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="button" class="btn btn-danger delete-card">Удалить</button>
+          <button type="button" class="btn btn-primary save-card">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+    var kanban3 = {};
+    var disable_sync = false;
+    function create_kanban(boards){
+        kanban3 = new jKanban({
+            element : '#kanban',
+            glutter: "40px",
+            responsivePercentage: true,  
+            dragBoards : false,
+            buttonClick: function(el, boardId) {
+                disable_sync=true;
+                var formItem = document.createElement("form");
+                formItem.setAttribute("class", "itemform");
+                formItem.innerHTML =
+                    '<div class="form-group"><textarea class="form-control" rows="2" autofocus></textarea></div><div class="form-group"><button type="submit" class="btn btn-primary btn-xs pull-right mt-3">Добавить</button><button type="button" id="CancelBtn" class="btn btn-default btn-xs pull-right mt-3">Отмена</button></div>';
+
+                kanban3.addForm(boardId, formItem);
+                formItem.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    var text = e.target[0].value;
+                    kanban3.addElement(boardId, {title: text});
+                    
+                    formItem.parentNode.removeChild(formItem);
+                    push_cards();
+                    disable_sync=false;
+                });
+                document.getElementById("CancelBtn").onclick = function() {
+                    formItem.parentNode.removeChild(formItem);
+                    disable_sync=false;
+                };
+            },
+            dropEl : function (el, target, source, sibling) {
+                push_cards();
+                disable_sync=false;
+            },
+            dragendEl : function (el) {
+                disable_sync=true;
+            },
+
+            dragEl : function (el, source) {
+                disable_sync=true;
+            }, 
+
+            click : function(el){
+                show_modal(el);
+            },
+            boards :boards,
+            
+            itemAddOptions: {
+                enabled: true,
+                content: '+ Добавить карточку',
+                class: 'btn btn-primary mt-3',
+                footer: true
+            }
+        });
+    }
+    var sync_status = true
+    function toggle_sync(x) {
+        sync_status = x;
+    }
+
+    function show_modal (el) {
+        var modal_ = new bootstrap.Modal(document.getElementById('card_modal'));
+
+        $(".modal-title").text(el.innerText);
+        $(".modal-description").text(el.getAttribute('data-description'));
+
+        $(".delete-card").bind('click', function() {
+            kanban3.removeElement(el);
+            push_cards();
+            modal_.hide();
+        });
+
+        $(".save-card").bind('click', function() {
+            var description = $('.modal-description').val();
+            $(el).attr('data-description',description);
+            push_cards();
+            modal_.hide();
+        });
+
+        modal_.show();
+    }
+
+    function push_cards() {
+        var boardData = {
+            author_id:"{{user_id}}",
+            project_id:"{{project_id}}",
+            boards: {
+                backlog:Array.from(kanban3.getBoardElements('_backlog')).map(x => [x.innerText, x.getAttribute('data-description')]),
+                todo:Array.from(kanban3.getBoardElements('_todo')).map(x => [x.innerText, x.getAttribute('data-description')]),
+                working:Array.from(kanban3.getBoardElements('_working')).map(x => [x.innerText, x.getAttribute('data-description')]),
+                done:Array.from(kanban3.getBoardElements('_done')).map(x => [x.innerText, x.getAttribute('data-description')])
+            }
+        };
+
+        $.post('/api/board/push_cards', JSON.stringify(boardData), function(data){}).fail(function() {alert("Не удалось отправить обновления")});
+    }
+
+    function fetch_cards() {
+        console.log(disable_sync);
+        if (disable_sync==false && sync_status==true) {
+            $.post('/api/board/fetch_cards', JSON.stringify({author_id:"{{user_id}}", project_id:"{{project_id}}"}), function(data){
+                $("#kanban").remove();
+                $( ".kanban_container" ).append('<div id="kanban"></div>');
+                create_kanban(data);
+                
+            }).fail(function() {alert("Не удалось получить обновления")});
+        }
+        setTimeout(fetch_cards, 5000);
+    };
+
+    window.onload = fetch_cards();
+</script>
+{% endblock body %}

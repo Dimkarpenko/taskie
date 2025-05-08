@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.145.0">
+    <title>Проекты | Taskie - менеджер задач</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/product/">
+
+    <script src="{{url_for('assets', path='js/color-modes.js')}}"></script>
+
+    <link href="{{url_for('assets', path='dist/css/bootstrap.min.css')}}" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="{{url_for('assets', path='img/favicons/apple-touch-icon.png')}}" sizes="180x180">
+<link rel="icon" href="{{url_for('assets', path='img/favicons/favicon-32x32.png')}}" sizes="32x32" type="image/png">
+<link rel="icon" href="{{url_for('assets', path='img/favicons/favicon-16x16.png')}}" sizes="16x16" type="image/png">
+<link rel="manifest" href="{{url_for('assets', path='img/favicons/manifest.json')}}">
+<link rel="mask-icon" href="{{url_for('assets', path='img/favicons/safari-pinned-tab.svg')}}" color="#712cf9">
+<link rel="icon" href="{{url_for('assets', path='img/favicons/favicon.ico')}}">
+<meta name="theme-color" content="#712cf9">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+{% block header %}{% endblock header %}
+    
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="aperture" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/>
+  </symbol>
+  <symbol id="cart" viewBox="0 0 16 16">
+    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </symbol>
+  <symbol id="chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+  </symbol>
+</svg>
+
+<nav class="navbar navbar-expand-md bg-dark sticky-top border-bottom" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand d-md-none" href="#">
+      <img class="mb-4" src="{{url_for('assets', path='img/logo.png')}}" alt="" width="72">
+      Taskie
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasLabel">Taskie</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav flex-grow-1 justify-content-between">
+          <li class="nav-item"><a class="nav-link" href="#" aria-label="Aperture">
+            <img src="{{url_for('assets', path='img/logo1.png')}}" style="width: 35px;">
+          </a></li>
+          <li class="nav-item"><a class="nav-link" href="/account/">Аккаунт</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#interface">Интерфейс</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#info">О проекте</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#features">Команда разработки</a></li>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+<main style="margin:3%;">
+    {% block body %}{% endblock body %}
+</main>
+
+<footer class="container py-5">
+  <div class="row">
+    <div class="col-12 col-md">
+      <img src="{{url_for('assets', path='img/logo1.png')}}" style="width: 35px;">
+      <small class="d-block mb-3 text-body-secondary">&copy; 2025 Taskie</small>
+    </div>
+    <div class="col-6 col-md">
+      <h5>Ссылки</h5>
+      <ul class="list-unstyled text-small">
+        <li><a class="link-secondary text-decoration-none" href="https://telegra.ph/Politika-konfidencialnosti-05-05-11" target="_blank">Политика конфенденциальности</a></li>
+        <li><a class="link-secondary text-decoration-none" href="https://telegra.ph/Polzovatelskoe-soglashenie-05-05-9" target="_blank">Пользовательское соглашение</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+<script defer src="{{url_for('assets', path='dist/js/bootstrap.bundle.min.js')}}" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"></script>
+
+    </body>
+</html>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block header %}
+<link href="{{url_for('assets', path='css/features.css')}}" rel="stylesheet">
+{% endblock header %}
+
+{% block body %}
+<div class="container w-100 h-100 overflow-auto" id="custom-cards">
+  <h2 class="pb-2 border-bottom">Ваши проекты</h2>
+  <a href="/account/projects/new"><button class="btn btn-primary btn-lg mt-5" type="button">Новый проект</button></a>
+  {% for elem in projects %}
+  <a href="/project/{{elem['project_id']}}" style="text-decoration: none;">
+    <div class="col">
+      <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg mt-5" style="background-image:linear-gradient(rgba(0, 0, 0, 0.601), rgba(0, 0, 0, 0.601)), url({{elem['cover']}});">
+        <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+          <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">{{elem['title']}}</h3>
+          <ul class="d-flex list-unstyled mt-auto">
+            
+            <li class="me-auto">
+              {% for author in elem['authors'] %}
+              <small>@{{author}}</small>
+              {% endfor %}
+            </li>
+            
+            {% for tag in elem['tags'] %}
+            <li class="d-flex align-items-center me-3">
+              <small>#{{tag}}</small>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+
+</div>
+
+{% endblock body %}
